@@ -1,0 +1,150 @@
+[
+  {
+    "id": "1",
+    "tieuDe": "Lãi Suất Ngân Hàng Tháng 5/2026: Cập Nhật Mới Nhất Và So Sánh Chi Tiết",
+    "slug": "lai-suat-ngan-hang-thang-5-2026",
+    "moTa": "Cập nhật lãi suất tiết kiệm ngân hàng tháng 5/2026. So sánh lãi suất online và tại quầy của 30+ ngân hàng Việt Nam để tìm nơi gửi tiền có lợi nhất.",
+    "noiDung": "<h2>Tổng Quan Lãi Suất Tháng 5/2026</h2><p>Trong tháng 5/2026, mặt bằng lãi suất tiết kiệm tại các ngân hàng Việt Nam tiếp tục có những biến động đáng chú ý. Các ngân hàng tư nhân vẫn duy trì mức lãi suất hấp dẫn hơn so với khối ngân hàng quốc doanh.</p><h2>Top Ngân Hàng Có Lãi Suất Cao Nhất</h2><p>Theo khảo sát mới nhất, TPBank và SeABank đang dẫn đầu với mức lãi suất tiết kiệm online kỳ hạn 12 tháng lên tới 5.6%/năm. Đây là mức lãi suất rất hấp dẫn cho những ai muốn gửi tiền dài hạn.</p><h2>So Sánh Lãi Suất Online vs Tại Quầy</h2><p>Gửi tiết kiệm online thường có lãi suất cao hơn từ 0.1-0.2%/năm so với gửi tại quầy. Điều này nhằm khuyến khích khách hàng sử dụng các dịch vụ ngân hàng số, giúp giảm chi phí vận hành cho ngân hàng.</p><h2>Lời Khuyên Khi Gửi Tiết Kiệm</h2><p>Trước khi quyết định gửi tiền, bạn nên so sánh lãi suất giữa các ngân hàng, xem xét kỳ hạn phù hợp với nhu cầu tài chính, và đảm bảo ngân hàng được Nhà nước bảo hiểm tiền gửi.</p>",
+    "anhDaiDien": "/blog/lai-suat-thang-5-2026.jpg",
+    "tacGia": "Ban Biên Tập",
+    "ngayDang": "2026-05-01",
+    "ngayCapNhat": "2026-05-07",
+    "tags": ["lãi suất", "tiết kiệm", "ngân hàng", "2026"],
+    "faq": [
+      {
+        "cauHoi": "Ngân hàng nào có lãi suất tiết kiệm cao nhất tháng 5/2026?",
+        "traLoi": "Theo cập nhật mới nhất, TPBank và SeABank đang có mức lãi suất cao nhất với 5.6%/năm cho kỳ hạn 12 tháng gửi online."
+      },
+      {
+        "cauHoi": "Gửi tiết kiệm online có an toàn không?",
+        "traLoi": "Gửi tiết kiệm online hoàn toàn an toàn vì tiền gửi được bảo hiểm bởi Bảo hiểm tiền gửi Việt Nam với hạn mức 125 triệu đồng/người/ngân hàng."
+      },
+      {
+        "cauHoi": "Tại sao lãi suất online cao hơn tại quầy?",
+        "traLoi": "Ngân hàng tiết kiệm được chi phí nhân viên và vận hành khi khách hàng giao dịch online, nên họ chia sẻ lợi ích này bằng cách tăng lãi suất cho kênh online."
+      }
+    ],
+    "thoiGianDoc": 5,
+    "baiVietLienQuan": ["cach-tinh-lai-suat-tiet-kiem", "gui-tiet-kiem-ky-han-nao-tot-nhat"]
+  },
+  {
+    "id": "2",
+    "tieuDe": "Cách Tính Lãi Suất Tiết Kiệm: Công Thức Và Ví Dụ Cụ Thể",
+    "slug": "cach-tinh-lai-suat-tiet-kiem",
+    "moTa": "Hướng dẫn chi tiết cách tính lãi suất tiết kiệm ngân hàng với công thức và ví dụ cụ thể. Tìm hiểu lãi đơn, lãi kép và cách tối ưu hóa lợi nhuận.",
+    "noiDung": "<h2>Công Thức Tính Lãi Đơn</h2><p>Lãi đơn là phương pháp tính lãi phổ biến nhất cho tiền gửi tiết kiệm có kỳ hạn. Công thức tính như sau:</p><p><strong>Tiền lãi = Tiền gốc × Lãi suất × Thời gian / 12</strong></p><p>Ví dụ: Gửi 100 triệu đồng với lãi suất 5%/năm trong 12 tháng, tiền lãi = 100,000,000 × 5% × 12/12 = 5,000,000 đồng.</p><h2>Công Thức Tính Lãi Kép</h2><p>Lãi kép là khi tiền lãi được cộng vào gốc để tiếp tục sinh lãi. Công thức:</p><p><strong>Tổng tiền = Tiền gốc × (1 + Lãi suất/n)^(n×t)</strong></p><p>Trong đó n là số lần ghép lãi trong năm, t là số năm.</p><h2>So Sánh Lãi Đơn Và Lãi Kép</h2><p>Với cùng số tiền gốc và lãi suất, lãi kép luôn mang lại lợi nhuận cao hơn lãi đơn, đặc biệt khi thời gian gửi càng dài thì chênh lệch càng lớn.</p>",
+    "anhDaiDien": "/blog/cach-tinh-lai-suat.jpg",
+    "tacGia": "Ban Biên Tập",
+    "ngayDang": "2026-04-15",
+    "ngayCapNhat": "2026-05-01",
+    "tags": ["lãi suất", "công thức", "tính toán", "tiết kiệm"],
+    "faq": [
+      {
+        "cauHoi": "Lãi đơn và lãi kép khác nhau như thế nào?",
+        "traLoi": "Lãi đơn chỉ tính trên số tiền gốc ban đầu, còn lãi kép tính cả trên tiền lãi đã sinh ra trước đó, giúp tổng tiền lãi cao hơn theo thời gian."
+      },
+      {
+        "cauHoi": "Gửi 100 triệu lãi suất 5%/năm trong 1 năm được bao nhiêu tiền?",
+        "traLoi": "Với lãi đơn, bạn sẽ nhận được 5 triệu đồng tiền lãi. Tổng cộng khi đáo hạn là 105 triệu đồng."
+      }
+    ],
+    "thoiGianDoc": 7,
+    "baiVietLienQuan": ["lai-suat-ngan-hang-thang-5-2026", "gui-tiet-kiem-ky-han-nao-tot-nhat"]
+  },
+  {
+    "id": "3",
+    "tieuDe": "Gửi Tiết Kiệm Kỳ Hạn Nào Tốt Nhất? Hướng Dẫn Chọn Kỳ Hạn Phù Hợp",
+    "slug": "gui-tiet-kiem-ky-han-nao-tot-nhat",
+    "moTa": "Phân tích ưu nhược điểm của các kỳ hạn tiết kiệm 1, 3, 6, 12 tháng. Hướng dẫn chọn kỳ hạn gửi tiền phù hợp với nhu cầu tài chính cá nhân.",
+    "noiDung": "<h2>Tổng Quan Các Kỳ Hạn Tiết Kiệm</h2><p>Các ngân hàng thường cung cấp nhiều kỳ hạn gửi tiết kiệm: 1 tháng, 3 tháng, 6 tháng, 12 tháng, và dài hơn. Mỗi kỳ hạn có ưu nhược điểm riêng.</p><h2>Kỳ Hạn Ngắn (1-3 Tháng)</h2><p>Ưu điểm: Linh hoạt, dễ rút khi cần. Nhược điểm: Lãi suất thấp hơn, chỉ từ 1.6-3%/năm.</p><h2>Kỳ Hạn Trung Bình (6 Tháng)</h2><p>Đây là lựa chọn cân bằng giữa lãi suất và tính linh hoạt. Lãi suất dao động từ 4-4.6%/năm.</p><h2>Kỳ Hạn Dài (12 Tháng Trở Lên)</h2><p>Lãi suất cao nhất, từ 5-5.6%/năm. Phù hợp với khoản tiền không cần dùng trong thời gian dài.</p><h2>Lời Khuyên Chọn Kỳ Hạn</h2><p>Hãy chia nhỏ tiền tiết kiệm thành nhiều khoản với các kỳ hạn khác nhau để vừa có lãi cao, vừa đảm bảo tính thanh khoản.</p>",
+    "anhDaiDien": "/blog/chon-ky-han-tiet-kiem.jpg",
+    "tacGia": "Ban Biên Tập",
+    "ngayDang": "2026-04-10",
+    "ngayCapNhat": "2026-04-25",
+    "tags": ["tiết kiệm", "kỳ hạn", "tài chính cá nhân"],
+    "faq": [
+      {
+        "cauHoi": "Kỳ hạn nào có lãi suất cao nhất?",
+        "traLoi": "Thông thường kỳ hạn càng dài thì lãi suất càng cao. Kỳ hạn 12 tháng trở lên có mức lãi suất cao nhất."
+      },
+      {
+        "cauHoi": "Nên gửi tiết kiệm 6 tháng hay 12 tháng?",
+        "traLoi": "Nếu bạn không cần dùng tiền trong năm tới, gửi 12 tháng sẽ có lãi cao hơn. Nếu không chắc chắn, hãy chia nhỏ để gửi nhiều kỳ hạn."
+      }
+    ],
+    "thoiGianDoc": 6,
+    "baiVietLienQuan": ["cach-tinh-lai-suat-tiet-kiem", "lai-suat-ngan-hang-thang-5-2026"]
+  },
+  {
+    "id": "4",
+    "tieuDe": "Lãi Kép Là Gì? Sức Mạnh Của Lãi Kép Trong Đầu Tư Dài Hạn",
+    "slug": "lai-kep-la-gi",
+    "moTa": "Tìm hiểu lãi kép là gì, công thức tính và sức mạnh kỳ diệu của lãi kép trong việc gia tăng tài sản theo thời gian. Ví dụ minh họa chi tiết.",
+    "noiDung": "<h2>Định Nghĩa Lãi Kép</h2><p>Lãi kép (compound interest) là lãi suất được tính trên cả tiền gốc và tiền lãi đã tích lũy từ các kỳ trước. Albert Einstein từng gọi đây là 'kỳ quan thứ 8 của thế giới'.</p><h2>Công Thức Tính Lãi Kép</h2><p>A = P × (1 + r/n)^(nt)</p><p>Trong đó: A là tổng tiền, P là tiền gốc, r là lãi suất năm, n là số lần ghép lãi/năm, t là số năm.</p><h2>Ví Dụ Minh Họa</h2><p>Gửi 100 triệu với lãi suất 6%/năm, ghép lãi hàng tháng trong 10 năm:</p><p>Lãi đơn: 100 triệu × 6% × 10 = 60 triệu → Tổng: 160 triệu</p><p>Lãi kép: 100 × (1 + 0.06/12)^120 = 181.9 triệu</p><p>Chênh lệch: 21.9 triệu đồng!</p><h2>Quy Tắc 72</h2><p>Để ước tính thời gian nhân đôi tiền, lấy 72 chia cho lãi suất. Ví dụ: lãi suất 6%/năm → 72/6 = 12 năm để nhân đôi.</p>",
+    "anhDaiDien": "/blog/lai-kep-la-gi.jpg",
+    "tacGia": "Ban Biên Tập",
+    "ngayDang": "2026-04-05",
+    "ngayCapNhat": "2026-04-20",
+    "tags": ["lãi kép", "đầu tư", "tài chính"],
+    "faq": [
+      {
+        "cauHoi": "Lãi kép khác lãi đơn như thế nào?",
+        "traLoi": "Lãi đơn chỉ tính trên gốc, còn lãi kép tính trên gốc + lãi đã sinh. Theo thời gian, lãi kép tạo ra nhiều tiền hơn đáng kể."
+      },
+      {
+        "cauHoi": "Quy tắc 72 là gì?",
+        "traLoi": "Quy tắc 72 giúp ước tính thời gian nhân đôi tiền: lấy 72 chia cho lãi suất hàng năm. Ví dụ: lãi 8%/năm → 72/8 = 9 năm nhân đôi."
+      }
+    ],
+    "thoiGianDoc": 8,
+    "baiVietLienQuan": ["cach-tinh-lai-suat-tiet-kiem", "gui-tiet-kiem-ky-han-nao-tot-nhat"]
+  },
+  {
+    "id": "5",
+    "tieuDe": "Vay Ngân Hàng: Cách Tính Tiền Trả Hàng Tháng Và Lãi Suất Vay",
+    "slug": "cach-tinh-lai-suat-vay-ngan-hang",
+    "moTa": "Hướng dẫn cách tính tiền trả hàng tháng khi vay ngân hàng. So sánh phương pháp dư nợ giảm dần và trả góp đều, kèm ví dụ cụ thể.",
+    "noiDung": "<h2>Hai Phương Pháp Tính Lãi Vay Phổ Biến</h2><p>Khi vay ngân hàng, có hai phương pháp tính lãi chính: dư nợ giảm dần và trả góp đều (annuity).</p><h2>Phương Pháp Dư Nợ Giảm Dần</h2><p>Tiền gốc trả đều hàng tháng, lãi tính trên số dư nợ còn lại. Tháng đầu trả nhiều, các tháng sau giảm dần. Tổng lãi phải trả thấp hơn.</p><h2>Phương Pháp Trả Góp Đều</h2><p>Số tiền trả hàng tháng cố định trong suốt kỳ vay. Dễ quản lý ngân sách hơn nhưng tổng lãi cao hơn.</p><h2>Ví Dụ Tính Toán</h2><p>Vay 500 triệu, lãi suất 10%/năm, kỳ hạn 10 năm:</p><p>- Dư nợ giảm dần: Tháng đầu trả 8.33 triệu (gốc) + 4.17 triệu (lãi) = 12.5 triệu</p><p>- Trả góp đều: Mỗi tháng trả khoảng 6.6 triệu</p>",
+    "anhDaiDien": "/blog/tinh-lai-vay.jpg",
+    "tacGia": "Ban Biên Tập",
+    "ngayDang": "2026-03-20",
+    "ngayCapNhat": "2026-04-10",
+    "tags": ["vay", "lãi suất vay", "ngân hàng"],
+    "faq": [
+      {
+        "cauHoi": "Vay dư nợ giảm dần hay trả góp đều có lợi hơn?",
+        "traLoi": "Dư nợ giảm dần có tổng lãi thấp hơn, tiết kiệm được tiền. Tuy nhiên, tháng đầu phải trả nhiều nên cần thu nhập ổn định."
+      },
+      {
+        "cauHoi": "Lãi suất vay ngân hàng hiện nay là bao nhiêu?",
+        "traLoi": "Lãi suất vay tiêu dùng thường từ 8-15%/năm, vay mua nhà từ 7-12%/năm tùy ngân hàng và gói vay."
+      }
+    ],
+    "thoiGianDoc": 7,
+    "baiVietLienQuan": ["lai-kep-la-gi", "cach-tinh-lai-suat-tiet-kiem"]
+  },
+  {
+    "id": "6",
+    "tieuDe": "Bảo Hiểm Tiền Gửi: Những Điều Cần Biết Khi Gửi Tiết Kiệm Ngân Hàng",
+    "slug": "bao-hiem-tien-gui-la-gi",
+    "moTa": "Tìm hiểu về bảo hiểm tiền gửi tại Việt Nam, mức bảo hiểm tối đa, và những điều cần lưu ý để bảo vệ tiền gửi của bạn.",
+    "noiDung": "<h2>Bảo Hiểm Tiền Gửi Là Gì?</h2><p>Bảo hiểm tiền gửi là chính sách bảo vệ người gửi tiền khi ngân hàng gặp khó khăn tài chính. Tại Việt Nam, Bảo hiểm tiền gửi Việt Nam (DIV) là tổ chức chịu trách nhiệm này.</p><h2>Mức Bảo Hiểm Tối Đa</h2><p>Hiện tại, mức bảo hiểm tối đa là 125 triệu đồng/người/ngân hàng. Điều này có nghĩa nếu bạn gửi 200 triệu ở một ngân hàng và ngân hàng đó phá sản, bạn chỉ được bồi thường tối đa 125 triệu.</p><h2>Cách Bảo Vệ Tiền Gửi</h2><p>Để an toàn tuyệt đối, hãy chia nhỏ tiền gửi vào nhiều ngân hàng khác nhau, mỗi ngân hàng không quá 125 triệu đồng.</p><h2>Những Lưu Ý Quan Trọng</h2><p>Chỉ những khoản tiền gửi bằng VND tại các tổ chức tham gia bảo hiểm mới được bảo vệ. Tiền gửi ngoại tệ không thuộc phạm vi bảo hiểm.</p>",
+    "anhDaiDien": "/blog/bao-hiem-tien-gui.jpg",
+    "tacGia": "Ban Biên Tập",
+    "ngayDang": "2026-03-15",
+    "ngayCapNhat": "2026-04-01",
+    "tags": ["bảo hiểm", "tiết kiệm", "an toàn"],
+    "faq": [
+      {
+        "cauHoi": "Mức bảo hiểm tiền gửi tối đa hiện nay là bao nhiêu?",
+        "traLoi": "Mức bảo hiểm tiền gửi tối đa tại Việt Nam hiện là 125 triệu đồng/người/ngân hàng."
+      },
+      {
+        "cauHoi": "Làm sao để được bảo hiểm toàn bộ tiền gửi?",
+        "traLoi": "Hãy chia nhỏ tiền gửi vào nhiều ngân hàng khác nhau, mỗi ngân hàng không quá 125 triệu để được bảo hiểm toàn bộ."
+      }
+    ],
+    "thoiGianDoc": 5,
+    "baiVietLienQuan": ["gui-tiet-kiem-ky-han-nao-tot-nhat", "lai-suat-ngan-hang-thang-5-2026"]
+  }
+]
