@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/chung/Header";
 import { Footer } from "@/components/chung/Footer";
-import { JsonLd, taoSchemaOrganization, taoSchemaWebsite } from "@/lib/schema-structured-data";
+import { JsonLd, taoSchemaOrganization, taoSchemaWebsite } from "@/lib/schema-structured-data.tsx";
 
 const inter = Inter({
   subsets: ["latin", "vietnamese"],
