@@ -4,7 +4,7 @@ import type { NganHang, BaiViet } from "@/types";
 
 const SITE_NAME = "Lãi Suất Ngân Hàng";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://laisuatnganghang.vn";
-const DEFAULT_OG_IMAGE = "/og-image.jpg";
+const DEFAULT_OG_IMAGE = "/og-image.png";
 
 /**
  * Tạo metadata cho trang chủ
