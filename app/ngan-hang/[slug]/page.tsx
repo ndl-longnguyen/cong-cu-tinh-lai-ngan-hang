@@ -1,9 +1,10 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/chung/Breadcrumb";
-import { layNganHangTheoSlug, layDanhSachNganHang, layLaiSuatTheoNganHang } from "@/lib/lay-du-lieu";
-import { dinhDangPhanTram, dinhDangTien } from "@/lib/dinh-dang";
-import { Globe, Phone, MapPin, Calendar, Info, ArrowRight } from "lucide-react";
+import { getBankBySlug, getBanks } from "@/lib/data-access/banks";
+import { getRatesByBank } from "@/lib/data-access/rates";
+import { dinhDangPhanTram } from "@/lib/dinh-dang";
+import { Globe, Calendar, Info, ArrowRight, ShieldCheck, ExternalLink } from "lucide-react";
 import Link from "next/link";
 
 interface Props {
@@ -11,62 +12,84 @@ interface Props {
 }
 
 export async function generateStaticParams() {
-  const nganHangs = layDanhSachNganHang();
-  return nganHangs.map((nh) => ({
+  const banks = await getBanks();
+  return banks.map((nh) => ({
     slug: nh.slug,
   }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const nh = layNganHangTheoSlug(slug);
+  const nh = await getBankBySlug(slug);
   if (!nh) return {};
 
   return {
-    title: `Lãi suất ngân hàng ${nh.ten} mới nhất 2026`,
-    description: `Cập nhật biểu lãi suất tiết kiệm ngân hàng ${nh.ten} (${nh.tenVietTat}) mới nhất. Tra cứu lãi suất online và tại quầy chi tiết các kỳ hạn.`,
+    title: `Lãi Suất Ngân Hàng ${nh.short_name} (${nh.code}) Mới Nhất 2026 | Nguồn Chính Thức`,
+    description: `Cập nhật biểu lãi suất tiền gửi tiết kiệm ngân hàng ${nh.name} (${nh.short_name}) mới nhất. Tra cứu lãi suất online và tại quầy chi tiết các kỳ hạn từ 1 đến 36 tháng.`,
   };
 }
 
 export default async function Page({ params }: Props) {
   const { slug } = await params;
-  const nh = layNganHangTheoSlug(slug);
+  const nh = await getBankBySlug(slug);
   if (!nh) notFound();
 
-  const laiSuats = layLaiSuatTheoNganHang(nh.id);
-  const laiOnline = laiSuats.filter(ls => ls.hinhThuc === 'online').sort((a, b) => a.kyHan - b.kyHan);
-  const laiTaiQuay = laiSuats.filter(ls => ls.hinhThuc === 'tai-quay').sort((a, b) => a.kyHan - b.kyHan);
+  const laiSuats = await getRatesByBank(nh.id);
+  const laiOnline = laiSuats
+    .filter((ls) => ls.channel === "online")
+    .sort((a, b) => a.term_value - b.term_value);
+  const laiTaiQuay = laiSuats
+    .filter((ls) => ls.channel === "counter")
+    .sort((a, b) => a.term_value - b.term_value);
+
+  const latestVerifiedDate = laiSuats[0]?.verified_at || "Mới nhất";
+  const officialSourceUrl = laiSuats[0]?.source_url || nh.official_website;
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
       <Breadcrumb
         items={[
           { name: "Lãi suất", href: "/lai-suat" },
-          { name: nh.tenVietTat, href: `/ngan-hang/${nh.slug}` },
+          { name: nh.short_name, href: `/ngan-hang/${nh.slug}` },
         ]}
       />
 
       {/* Hero Section */}
-      <div className="bg-card border border-border rounded-2xl p-8 mb-8 shadow-sm">
-        <div className="flex flex-col md:flex-row gap-8 items-start">
-          <div className="h-24 w-24 rounded-2xl bg-muted flex items-center justify-center text-2xl font-bold text-primary shrink-0 border border-border">
-            {nh.tenVietTat}
+      <div className="bg-card border border-border rounded-3xl p-6 sm:p-8 mb-8 shadow-sm">
+        <div className="flex flex-col md:flex-row gap-6 items-start">
+          <div className="h-20 w-20 rounded-2xl bg-muted flex items-center justify-center text-xl font-bold text-primary shrink-0 border border-border">
+            {nh.code || nh.short_name.substring(0, 3)}
           </div>
           <div className="flex-1">
-            <h1 className="text-3xl font-bold text-foreground mb-4">
-              Lãi suất ngân hàng {nh.ten} ({nh.tenVietTat})
+            <div className="flex flex-wrap items-center gap-2 mb-2">
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200 inline-flex items-center gap-1">
+                <ShieldCheck className="h-3.5 w-3.5" />
+                Xác minh: {latestVerifiedDate}
+              </span>
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 font-semibold border border-blue-200">
+                Mã: {nh.code}
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-3">
+              Biểu lãi suất ngân hàng {nh.name} ({nh.short_name})
             </h1>
-            <p className="text-muted-foreground leading-relaxed mb-6">
-              {nh.moTaChiTiet || `Thông tin chi tiết về biểu lãi suất tiền gửi tiết kiệm mới nhất của ngân hàng ${nh.ten}.`}
+            <p className="text-sm text-muted-foreground leading-relaxed mb-5">
+              Cập nhật biểu lãi suất tiền gửi tiết kiệm VND mới nhất của {nh.short_name}. Mọi số liệu được đối chiếu trực tiếp từ website chính thức {nh.official_domain}.
             </p>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <a href={nh.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary">
-                <Globe className="h-4 w-4" />
-                Website chính thức
+            <div className="flex flex-wrap items-center gap-4 text-xs">
+              <a
+                href={nh.official_website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 text-muted-foreground hover:text-primary font-medium underline"
+              >
+                <Globe className="h-3.5 w-3.5" />
+                {nh.official_domain}
+                <ExternalLink className="h-2.5 w-2.5" />
               </a>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Calendar className="h-4 w-4" />
-                Thành lập: {nh.thanhLap}
+              <div className="flex items-center gap-1.5 text-muted-foreground">
+                <Calendar className="h-3.5 w-3.5" />
+                Năm thành lập: {nh.established_year}
               </div>
             </div>
           </div>
@@ -78,30 +101,37 @@ export default async function Page({ params }: Props) {
         <div className="lg:col-span-2 space-y-8">
           {/* Online Table */}
           <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
-            <div className="px-6 py-4 border-b border-border bg-blue-50/50">
+            <div className="px-6 py-4 border-b border-border bg-blue-50/50 flex items-center justify-between">
               <h3 className="font-semibold text-blue-900 flex items-center gap-2">
-                <Globe className="h-5 w-5" />
-                Lãi suất gửi tiết kiệm Online
+                <Globe className="h-4 w-4" />
+                Lãi suất gửi tiết kiệm Online (Trực tuyến)
               </h3>
+              <span className="text-xs text-blue-700 font-medium">Khuyên dùng</span>
             </div>
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-muted/30">
-                  <th className="px-6 py-3 border-b border-border">Kỳ hạn</th>
+                <tr className="bg-muted/40 text-xs text-muted-foreground">
+                  <th className="px-6 py-3 border-b border-border text-left">Kỳ hạn</th>
                   <th className="px-6 py-3 border-b border-border text-center">Lãi suất (%/năm)</th>
-                  <th className="px-6 py-3 border-b border-border text-right">Hành động</th>
+                  <th className="px-6 py-3 border-b border-border text-right">Tính thử tiền lãi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {laiOnline.map((ls) => (
-                  <tr key={ls.id} className="hover:bg-muted/20">
-                    <td className="px-6 py-4 font-medium">{ls.kyHan} tháng</td>
-                    <td className="px-6 py-4 text-center">
-                      <span className="text-secondary font-bold text-lg">{dinhDangPhanTram(ls.laiSuat)}</span>
+                  <tr key={ls.id} className="hover:bg-muted/20 transition-colors">
+                    <td className="px-6 py-3.5 font-medium">{ls.term_value} {ls.term_unit === 'month' ? 'tháng' : ls.term_unit}</td>
+                    <td className="px-6 py-3.5 text-center">
+                      <span className="text-secondary font-bold text-base">
+                        {dinhDangPhanTram(ls.interest_rate)}
+                      </span>
                     </td>
-                    <td className="px-6 py-4 text-right">
-                      <Link href="/cong-cu/tinh-lai-tiet-kiem" className="text-primary hover:underline text-xs">
-                        Tính tiền lãi
+                    <td className="px-6 py-3.5 text-right">
+                      <Link
+                        href={`/cong-cu/tinh-lai-tiet-kiem?bank=${nh.id}&term=${ls.term_value}`}
+                        className="text-primary hover:underline text-xs font-semibold inline-flex items-center gap-1"
+                      >
+                        Tính lãi
+                        <ArrowRight className="h-3 w-3" />
                       </Link>
                     </td>
                   </tr>
@@ -113,29 +143,34 @@ export default async function Page({ params }: Props) {
           {/* At Counter Table */}
           <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
             <div className="px-6 py-4 border-b border-border bg-orange-50/50">
-              <h3 className="font-semibold text-orange-900 flex items-center gap-2">
-                <MapPin className="h-5 w-5" />
-                Lãi suất gửi tại quầy
+              <h3 className="font-semibold text-orange-900">
+                Lãi suất gửi tiết kiệm tại quầy giao dịch
               </h3>
             </div>
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-muted/30">
-                  <th className="px-6 py-3 border-b border-border">Kỳ hạn</th>
+                <tr className="bg-muted/40 text-xs text-muted-foreground">
+                  <th className="px-6 py-3 border-b border-border text-left">Kỳ hạn</th>
                   <th className="px-6 py-3 border-b border-border text-center">Lãi suất (%/năm)</th>
-                  <th className="px-6 py-3 border-b border-border text-right">Hành động</th>
+                  <th className="px-6 py-3 border-b border-border text-right">Tính thử tiền lãi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {laiTaiQuay.map((ls) => (
-                  <tr key={ls.id} className="hover:bg-muted/20">
-                    <td className="px-6 py-4 font-medium">{ls.kyHan} tháng</td>
-                    <td className="px-6 py-4 text-center">
-                      <span className="text-orange-600 font-bold text-lg">{dinhDangPhanTram(ls.laiSuat)}</span>
+                  <tr key={ls.id} className="hover:bg-muted/20 transition-colors">
+                    <td className="px-6 py-3.5 font-medium">{ls.term_value} {ls.term_unit === 'month' ? 'tháng' : ls.term_unit}</td>
+                    <td className="px-6 py-3.5 text-center">
+                      <span className="text-orange-600 font-bold text-base">
+                        {dinhDangPhanTram(ls.interest_rate)}
+                      </span>
                     </td>
-                    <td className="px-6 py-4 text-right">
-                      <Link href="/cong-cu/tinh-lai-tiet-kiem" className="text-primary hover:underline text-xs">
-                        Tính tiền lãi
+                    <td className="px-6 py-3.5 text-right">
+                      <Link
+                        href={`/cong-cu/tinh-lai-tiet-kiem?bank=${nh.id}&term=${ls.term_value}`}
+                        className="text-primary hover:underline text-xs font-semibold inline-flex items-center gap-1"
+                      >
+                        Tính lãi
+                        <ArrowRight className="h-3 w-3" />
                       </Link>
                     </td>
                   </tr>
@@ -145,47 +180,46 @@ export default async function Page({ params }: Props) {
           </div>
         </div>
 
-        {/* Sidebar Info */}
+        {/* Sidebar */}
         <div className="space-y-6">
-          <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
-            <h3 className="font-bold text-lg mb-4">Lưu ý của {nh.tenVietTat}</h3>
-            <div className="space-y-4">
-              <div className="flex gap-3">
-                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                  <Info className="h-4 w-4 text-primary" />
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Số tiền gửi tối thiểu thường là 1.000.000 VND đối với hình thức gửi tiết kiệm có kỳ hạn.
-                </p>
-              </div>
-              <div className="flex gap-3">
-                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                  <Info className="h-4 w-4 text-primary" />
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Lãi suất thực tế có thể thay đổi dựa trên số dư tiền gửi (ví dụ: gửi trên 1 tỷ đồng có thể được thỏa thuận lãi suất cao hơn).
-                </p>
-              </div>
+          <div className="bg-card border border-border rounded-2xl p-6 shadow-sm space-y-4">
+            <h3 className="font-bold text-foreground text-base">Nguồn kiểm chứng chính thức</h3>
+            <div className="text-xs text-muted-foreground space-y-2 leading-relaxed">
+              <p>
+                Dữ liệu lãi suất của <strong>{nh.short_name}</strong> được trích xuất và giám sát liên tục từ domain <strong>{nh.official_domain}</strong>.
+              </p>
+              {officialSourceUrl && (
+                <a
+                  href={officialSourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-primary underline font-medium"
+                >
+                  Truy cập trang công bố biểu phí & lãi suất
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+              )}
             </div>
-            <Link 
-              href="/lai-suat" 
-              className="mt-6 w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-border hover:bg-muted transition-colors text-sm font-medium"
-            >
-              So sánh với ngân hàng khác
-              <ArrowRight className="h-4 w-4" />
-            </Link>
+            <div className="pt-3 border-t border-border">
+              <Link
+                href="/lai-suat"
+                className="w-full py-2.5 rounded-xl border border-border text-center block text-xs font-semibold hover:bg-muted transition-colors"
+              >
+                So sánh với các ngân hàng khác
+              </Link>
+            </div>
           </div>
 
-          <div className="bg-primary rounded-2xl p-6 text-primary-foreground shadow-md">
-            <h3 className="font-bold text-lg mb-2">Bạn muốn tối ưu tiền lãi?</h3>
-            <p className="text-sm text-primary-foreground/80 mb-6">
-              Sử dụng công cụ tính lãi kép để xem số tiền của bạn sẽ tăng trưởng như thế nào nếu tái đầu tư liên tục.
+          <div className="bg-primary rounded-2xl p-6 text-primary-foreground shadow-md space-y-3">
+            <h3 className="font-bold text-base">Tối ưu kế hoạch tài chính</h3>
+            <p className="text-xs text-primary-foreground/80 leading-relaxed">
+              Sử dụng công cụ tính lãi kép để hình dung sức mạnh tăng trưởng tài sản khi tái tục liên tục toàn bộ tiền lãi.
             </p>
-            <Link 
-              href="/cong-cu/tinh-lai-kep" 
-              className="block w-full text-center py-3 rounded-xl bg-white text-primary font-bold hover:bg-white/90 transition-colors"
+            <Link
+              href="/cong-cu/tinh-lai-kep"
+              className="inline-block w-full text-center py-2.5 rounded-xl bg-white text-primary text-xs font-bold hover:bg-white/90 transition-colors shadow-sm"
             >
-              Thử ngay
+              Thử nghiệm Lãi Kép
             </Link>
           </div>
         </div>

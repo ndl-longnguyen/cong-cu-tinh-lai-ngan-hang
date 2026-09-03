@@ -1,59 +1,76 @@
 import { Metadata } from "next";
 import { Breadcrumb } from "@/components/chung/Breadcrumb";
 import { BangLaiSuat } from "@/components/lai-suat/BangLaiSuat";
-import { Building2 } from "lucide-react";
+import { SoSanhLaiSuatTietKiem } from "@/components/lai-suat/SoSanhLaiSuatTietKiem";
+import { Building2, ShieldCheck } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "So sánh lãi suất ngân hàng mới nhất hôm nay 2026",
+  title: "Bảng So Sánh Lãi Suất Ngân Hàng Mới Nhất 2026 | Nguồn Chính Thức",
   description:
-    "Bảng tổng hợp lãi suất gửi tiết kiệm của 30+ ngân hàng Việt Nam. Cập nhật mới nhất lãi suất Vietcombank, Agribank, BIDV, Techcombank...",
-  keywords: ["so sánh lãi suất", "lãi suất ngân hàng hôm nay", "lãi suất tiết kiệm mới nhất"],
+    "Bảng tra cứu và so sánh lãi suất tiền gửi tiết kiệm của hơn 30 ngân hàng Việt Nam. Cập nhật liên tục từ website chính thức của Vietcombank, BIDV, Agribank, Techcombank, VPBank, MB...",
+  keywords: [
+    "so sánh lãi suất",
+    "lãi suất ngân hàng hôm nay",
+    "lãi suất tiết kiệm mới nhất",
+    "lãi suất cao nhất",
+    "ngân hàng việt nam",
+  ],
 };
 
 export default function Page() {
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-      <Breadcrumb
-        items={[
-          { name: "Lãi suất", href: "/lai-suat" },
-        ]}
-      />
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+      <Breadcrumb items={[{ name: "Lãi suất", href: "/lai-suat" }]} />
 
-      <div className="mb-10">
-        <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 mb-4">
+      <div>
+        <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 mb-4">
           <Building2 className="h-6 w-6 text-primary" />
         </div>
-        <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-          Bảng so sánh lãi suất ngân hàng
+        <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
+          Biểu lãi suất tiết kiệm các ngân hàng Việt Nam
         </h1>
-        <p className="text-lg text-muted-foreground max-w-3xl">
-          Cập nhật lãi suất gửi tiết kiệm mới nhất tháng 5/2026 từ hơn 30 ngân hàng tại Việt Nam. 
-          Sử dụng bộ lọc để tìm mức lãi suất cao nhất theo kỳ hạn mong muốn.
+        <p className="text-muted-foreground max-w-3xl leading-relaxed">
+          Tổng hợp biểu lãi suất tiền gửi tiết kiệm VND dành cho khách hàng cá nhân từ hơn 30 ngân hàng. Dữ liệu được xác minh đối chiếu trực tiếp từ các kênh công bố chính thức của từng ngân hàng.
         </p>
       </div>
 
-      <BangLaiSuat />
+      {/* Bộ công cụ so sánh lợi nhuận thực tế */}
+      <SoSanhLaiSuatTietKiem />
 
-      {/* SEO Content */}
-      <div className="mt-20 prose max-w-none">
-        <h2 className="text-2xl font-bold mb-6">Kinh nghiệm chọn ngân hàng gửi tiết kiệm</h2>
+      {/* Bảng tra cứu chi tiết */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold text-foreground">
+            Bảng tra cứu chi tiết theo kỳ hạn
+          </h2>
+          <div className="flex items-center gap-1.5 text-xs text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+            <ShieldCheck className="h-4 w-4" />
+            <span>Nguồn chính thức đã xác minh</span>
+          </div>
+        </div>
+        <BangLaiSuat />
+      </div>
+
+      {/* SEO Content & Kinh nghiệm tài chính */}
+      <div className="pt-10 border-t border-border prose max-w-none">
+        <h2 className="text-2xl font-bold mb-6">Kinh nghiệm chọn ngân hàng gửi tiết kiệm hiệu quả</h2>
         <div className="grid md:grid-cols-3 gap-6 not-prose">
-          <div className="p-5 rounded-xl border border-border bg-card">
-            <h3 className="font-semibold mb-2">Độ uy tín (An toàn)</h3>
-            <p className="text-sm text-muted-foreground">
-              Nhóm Big4 (Agribank, Vietcombank, VietinBank, BIDV) luôn an toàn nhất nhưng lãi suất thường thấp hơn các ngân hàng TMCP.
+          <div className="p-6 rounded-2xl border border-border bg-card shadow-sm space-y-2">
+            <h3 className="font-bold text-foreground">01. Uy tín & An toàn</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Nhóm ngân hàng quốc doanh (Big4: Agribank, Vietcombank, BIDV, VietinBank) mang tính an toàn cao nhất, tuy nhiên lãi suất niêm yết thường thấp hơn khối TMCP từ 0.5% - 1.5%.
             </p>
           </div>
-          <div className="p-5 rounded-xl border border-border bg-card">
-            <h3 className="font-semibold mb-2">Lãi suất (Lợi nhuận)</h3>
-            <p className="text-sm text-muted-foreground">
-              Các ngân hàng quy mô vừa và nhỏ thường có chương trình ưu đãi lãi suất để thu hút vốn, có thể cao hơn 1-2% so với ngân hàng lớn.
+          <div className="p-6 rounded-2xl border border-border bg-card shadow-sm space-y-2">
+            <h3 className="font-bold text-foreground">02. Tối ưu kỳ hạn gửi</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Các kỳ hạn 6 đến 12 tháng thường mang lại điểm cân bằng tối ưu giữa lãi suất và tính thanh khoản. Hãy chia nhỏ thành nhiều sổ tiết kiệm thay vì gửi dồn một sổ.
             </p>
           </div>
-          <div className="p-5 rounded-xl border border-border bg-card">
-            <h3 className="font-semibold mb-2">Dịch vụ & Tiện ích</h3>
-            <p className="text-sm text-muted-foreground">
-              Ưu tiên các ngân hàng có ứng dụng Mobile Banking tốt, cho phép gửi và tất toán online linh hoạt 24/7.
+          <div className="p-6 rounded-2xl border border-border bg-card shadow-sm space-y-2">
+            <h3 className="font-bold text-foreground">03. Ưu tiên gửi Online</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Gửi tiết kiệm trên ứng dụng Mobile Banking của ngân hàng hầu hết đều được cộng thêm từ 0.1% đến 0.5%/năm so với gửi trực tiếp tại quầy.
             </p>
           </div>
         </div>

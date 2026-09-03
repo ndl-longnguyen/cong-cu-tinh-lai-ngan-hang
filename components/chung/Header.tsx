@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import {
   Building2,
@@ -53,13 +54,20 @@ export function Header() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
-              <Building2 className="h-5 w-5 text-primary-foreground" />
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white border border-border shadow-xs overflow-hidden group-hover:scale-105 transition-transform">
+              <Image
+                src="/icon.png"
+                alt="Logo Lãi Suất Ngân Hàng"
+                width={36}
+                height={36}
+                className="h-full w-full object-contain"
+                priority
+              />
             </div>
             <div className="hidden sm:block">
-              <span className="text-lg font-bold text-foreground">Lãi Suất</span>
-              <span className="text-lg font-bold text-primary"> Ngân Hàng</span>
+              <span className="text-lg font-bold text-foreground tracking-tight">Lãi Suất</span>
+              <span className="text-lg font-bold text-primary tracking-tight"> Ngân Hàng</span>
             </div>
           </Link>
 

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Building2 } from "lucide-react";
+import Image from "next/image";
 
 const footerLinks = {
   congCu: [
@@ -36,13 +36,19 @@ export function Footer() {
         <div className="py-12 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
           {/* Brand */}
           <div className="col-span-2 md:col-span-4 lg:col-span-1">
-            <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
-                <Building2 className="h-5 w-5 text-primary-foreground" />
+            <Link href="/" className="flex items-center gap-2.5 mb-4 group">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white border border-border shadow-xs overflow-hidden group-hover:scale-105 transition-transform">
+                <Image
+                  src="/icon.png"
+                  alt="Logo Lãi Suất Ngân Hàng"
+                  width={36}
+                  height={36}
+                  className="h-full w-full object-contain"
+                />
               </div>
               <div>
-                <span className="text-lg font-bold text-foreground">Lãi Suất</span>
-                <span className="text-lg font-bold text-primary"> Ngân Hàng</span>
+                <span className="text-lg font-bold text-foreground tracking-tight">Lãi Suất</span>
+                <span className="text-lg font-bold text-primary tracking-tight"> Ngân Hàng</span>
               </div>
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed">

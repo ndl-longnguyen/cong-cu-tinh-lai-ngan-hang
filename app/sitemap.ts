@@ -1,38 +1,98 @@
-import { MetadataRoute } from 'next'
- 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://laisuatnganhang.vn'
-  
-  return [
+import { MetadataRoute } from "next";
+import { getBanks } from "@/lib/data-access/banks";
+import { layTatCaBaiViet } from "@/lib/lay-du-lieu";
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://laisuatnganhang.vn";
+  const now = new Date();
+
+  // 1. Static Core Pages
+  const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 1,
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 1.0,
     },
     {
       url: `${baseUrl}/lai-suat`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.9,
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 0.95,
     },
     {
       url: `${baseUrl}/cong-cu/tinh-lai-tiet-kiem`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.9,
     },
     {
       url: `${baseUrl}/cong-cu/tinh-lai-kep`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.7,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.85,
     },
     {
       url: `${baseUrl}/cong-cu/tinh-vay`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.7,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.85,
     },
-  ]
+    {
+      url: `${baseUrl}/blog`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/about`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/contact`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/privacy-policy`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.4,
+    },
+    {
+      url: `${baseUrl}/terms`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.4,
+    },
+    {
+      url: `${baseUrl}/disclaimer`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.4,
+    },
+  ];
+
+  // 2. Dynamic Bank Pages
+  const banks = await getBanks();
+  const bankRoutes: MetadataRoute.Sitemap = banks.map((b) => ({
+    url: `${baseUrl}/ngan-hang/${b.slug}`,
+    lastModified: now,
+    changeFrequency: "daily",
+    priority: 0.8,
+  }));
+
+  // 3. Dynamic Blog Post Pages
+  const blogPosts = layTatCaBaiViet();
+  const blogRoutes: MetadataRoute.Sitemap = blogPosts.map((p) => ({
+    url: `${baseUrl}/blog/${p.slug}`,
+    lastModified: new Date(p.ngayCapNhat || p.ngayDang),
+    changeFrequency: "weekly",
+    priority: 0.7,
+  }));
+
+  return [...staticRoutes, ...bankRoutes, ...blogRoutes];
 }
