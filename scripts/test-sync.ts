@@ -65,13 +65,14 @@ async function run() {
   console.log(`\n=======================================================`);
   console.log(`KẾT QUẢ ĐỒNG BỘ (${elapsed}s)`);
   console.log(`=======================================================`);
-  console.log(`- Trạng thái: ${syncResult.success ? "THÀNH CÔNG (SUCCESS)" : "THẤT BẠI (FAILED)"}`);
+  const isSuccess = syncResult.status === "success" || syncResult.status === "partial";
+  console.log(`- Kết quả: ${isSuccess ? "THÀNH CÔNG" : "CHƯA HOÀN TẤT"}`);
   console.log(`- Trạng thái nguồn: ${syncResult.status}`);
-  console.log(`- Số mức lãi suất trích xuất: ${syncResult.ratesCount}`);
-  console.log(`- Số mức lãi suất thay đổi thực tế: ${syncResult.updatedCount}`);
+  console.log(`- Số mức lãi suất mới: ${syncResult.newRateCount}`);
+  console.log(`- Số mức lãi suất cũ: ${syncResult.oldRateCount}`);
   console.log(`- URL nguồn xác minh: ${syncResult.sourceUrl || "N/A"}`);
   if (syncResult.error) {
-    console.log(`- Lỗi ghi nhận: ${syncResult.error}`);
+    console.log(`- Chi tiết: ${syncResult.error}`);
   }
 
   // 3. Kiểm tra dữ liệu thực tế vừa lưu trong Supabase
