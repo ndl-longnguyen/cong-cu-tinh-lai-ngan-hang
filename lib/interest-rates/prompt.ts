@@ -1,7 +1,7 @@
 import { MasterBank, BANK_VERIFIED_DEPOSIT_URLS } from "../data-access/seed-data";
 
 /**
- * Sinh prompt nghiêm ngặt cho Gemini API kết hợp Google Search Grounding
+ * Sinh prompt cho 1 ngân hàng đơn lẻ
  */
 export function buildRateSearchPrompt(bank: MasterBank): string {
   const currentDate = new Date().toISOString().split("T")[0];
@@ -55,5 +55,64 @@ You must reply ONLY with a raw JSON object (or wrapped in standard \`\`\`json co
     }
   ]
 }
+`.trim();
+}
+
+/**
+ * Sinh prompt gom nhiều ngân hàng vào 1 lần gọi duy nhất (Batch Query).
+ * Tiết kiệm tối đa hạn mức Free Tier (1 request cho 8-10 ngân hàng).
+ */
+export function buildBatchRateSearchPrompt(banks: MasterBank[]): string {
+  const currentDate = new Date().toISOString().split("T")[0];
+
+  const banksListStr = banks
+    .map(
+      (b) =>
+        `- Ngân hàng ${b.short_name} (Mã: "${b.code}", Tên: "${b.name}", Domain: "${b.official_domain}", URL biểu lãi suất: "${BANK_VERIFIED_DEPOSIT_URLS[b.id] || b.official_website}")`
+    )
+    .join("\n");
+
+  return `
+You are a financial verification AI specialized in Vietnamese banking.
+Task: Search and verify CURRENT VND personal deposit interest rates (Lãi suất tiết kiệm cá nhân VND mới nhất) for these banks:
+${banksListStr}
+
+Today's Date: ${currentDate}
+
+CRITICAL RULES:
+1. ONLY return data from official sources or verified banking publications.
+2. NEVER guess, interpolate, or invent any interest rate.
+3. For each bank, return rates for standard terms: 1, 2, 3, 6, 9, 12, 18, 24, 36 months (both "online" and "counter" if available).
+4. Rates must be %/year (e.g. 4.6 for 4.6%/year).
+5. If no rates are verified for a bank, set status: "not_found", source: null, rates: [].
+6. RESPOND ONLY WITH A VALID JSON ARRAY. NEVER output conversational explanations, greetings, or prose outside the JSON.
+
+OUTPUT FORMAT:
+Return a JSON array containing an object for each bank in the requested list:
+[
+  {
+    "bankCode": "VCB",
+    "status": "success" | "partial" | "not_found",
+    "source": {
+      "url": "https://www.vietcombank.com.vn/vi-VN/KHCN/Tiet-kiem",
+      "title": "Biểu lãi suất Vietcombank",
+      "publishedAt": null,
+      "accessedAt": "${currentDate}"
+    },
+    "rates": [
+      {
+        "currency": "VND",
+        "channel": "online" | "counter",
+        "termValue": 12,
+        "termUnit": "month",
+        "rate": 4.6,
+        "paymentMethod": "maturity",
+        "minAmount": null,
+        "customerSegment": "individual",
+        "note": null
+      }
+    ]
+  }
+]
 `.trim();
 }

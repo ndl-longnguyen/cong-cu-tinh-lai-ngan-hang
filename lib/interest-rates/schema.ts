@@ -27,6 +27,9 @@ export const GeminiBankRateResultSchema = z.object({
   rates: z.array(GeminiRateItemSchema).default([]),
 });
 
+export const GeminiBatchBankRateResultSchema = z.array(GeminiBankRateResultSchema);
+
 export type GeminiRateItem = z.infer<typeof GeminiRateItemSchema>;
 export type GeminiRateSource = z.infer<typeof GeminiRateSourceSchema>;
 export type GeminiBankRateResult = z.infer<typeof GeminiBankRateResultSchema>;
+export type GeminiBatchBankRateResult = z.infer<typeof GeminiBatchBankRateResultSchema>;

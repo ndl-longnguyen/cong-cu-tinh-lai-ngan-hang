@@ -15,9 +15,13 @@ export interface SyncBankResult {
 }
 
 /**
- * Đồng bộ biểu lãi suất cho 1 ngân hàng với đầy đủ quy trình kiểm định và bảo toàn dữ liệu cũ
+ * Đồng bộ biểu lãi suất cho 1 ngân hàng với đầy đủ quy trình kiểm định và bảo toàn dữ liệu cũ.
+ * Có thể nhận prefetchedResult từ batch query để tiết kiệm lượt gọi Gemini API.
  */
-export async function syncBankRates(bank: MasterBank): Promise<SyncBankResult> {
+export async function syncBankRates(
+  bank: MasterBank,
+  prefetchedResult?: import("./schema").GeminiBankRateResult
+): Promise<SyncBankResult> {
   const supabase = getSupabaseAdminClient();
 
   try {
@@ -31,7 +35,7 @@ export async function syncBankRates(bank: MasterBank): Promise<SyncBankResult> {
         .select("channel, term_value, term_unit, payment_method, interest_rate")
         .eq("bank_id", bank.id);
 
-      if (existingRows) {
+      if (existingRows && existingRows.length > 0) {
         oldRateCount = existingRows.length;
         existingRows.forEach((row: any) => {
           const key = `${row.channel}-${row.term_value}-${row.term_unit}-${row.payment_method}`;
@@ -40,8 +44,8 @@ export async function syncBankRates(bank: MasterBank): Promise<SyncBankResult> {
       }
     }
 
-    // 2. Gọi Gemini API tra cứu với Search Grounding
-    const aiResult = await queryGeminiRatesForBank(bank);
+    // 2. Dùng dữ liệu prefetched từ batch hoặc gọi Gemini đơn lẻ
+    const aiResult = prefetchedResult || (await queryGeminiRatesForBank(bank));
 
     if (aiResult.status === "not_found" || !aiResult.rates || aiResult.rates.length === 0) {
       // LAST-KNOWN-GOOD STRATEGY: Giữ nguyên dữ liệu hiện tại, không xóa hay set null
@@ -158,6 +162,9 @@ export async function syncBankRates(bank: MasterBank): Promise<SyncBankResult> {
       sourceUrl,
     };
   } catch (err: any) {
+    if (err?.name === "GeminiQuotaExceededError") {
+      throw err;
+    }
     console.error(`Sync failure for bank ${bank.code}:`, err);
     return {
       bankId: bank.id,
