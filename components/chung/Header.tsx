@@ -54,13 +54,13 @@ export function Header() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white border border-border shadow-xs overflow-hidden group-hover:scale-105 transition-transform">
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white border border-border shadow-xs overflow-hidden group-hover:scale-105 transition-transform p-0.5">
               <Image
                 src="/icon.png"
                 alt="Logo Lãi Suất Ngân Hàng"
-                width={36}
-                height={36}
+                width={40}
+                height={40}
                 className="h-full w-full object-contain"
                 priority
               />

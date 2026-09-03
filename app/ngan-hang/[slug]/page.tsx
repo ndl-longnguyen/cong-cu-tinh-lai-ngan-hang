@@ -58,7 +58,7 @@ export default async function Page({ params }: Props) {
       {/* Hero Section */}
       <div className="bg-card border border-border rounded-3xl p-6 sm:p-8 mb-8 shadow-sm">
         <div className="flex flex-col md:flex-row gap-6 items-start">
-          <BankLogo bank={nh} size={76} className="rounded-2xl" />
+          <BankLogo bank={nh} width={150} height={60} className="rounded-2xl" />
           <div className="flex-1">
             <div className="flex flex-wrap items-center gap-2 mb-2">
               <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200 inline-flex items-center gap-1">

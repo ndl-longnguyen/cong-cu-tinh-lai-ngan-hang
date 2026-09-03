@@ -11,18 +11,24 @@ interface BankLogoProps {
     slug?: string;
     logo?: string;
   } | null;
-  size?: number;
+  width?: number;
+  height?: number;
+  size?: number; // Tương thích ngược: nếu truyền size, width = size * 2.2, height = size
   className?: string;
 }
 
-export function BankLogo({ bank, size = 40, className = "" }: BankLogoProps) {
+export function BankLogo({ bank, width, height, size, className = "" }: BankLogoProps) {
   const [hasError, setHasError] = useState(false);
+
+  // Tính toán kích thước chuẩn theo tỷ lệ logo ngân hàng (thường ngang ~2.4 : 1)
+  const actualHeight = height || (size ? size : 38);
+  const actualWidth = width || (size ? Math.round(size * 2.2) : 88);
 
   if (!bank) {
     return (
       <div
-        style={{ width: size, height: size }}
-        className={`rounded-xl bg-muted border border-border flex items-center justify-center shrink-0 ${className}`}
+        style={{ width: actualWidth, height: actualHeight }}
+        className={`rounded-lg bg-muted border border-border flex items-center justify-center shrink-0 ${className}`}
       >
         <span className="text-xs font-bold text-muted-foreground">NH</span>
       </div>
@@ -35,8 +41,8 @@ export function BankLogo({ bank, size = 40, className = "" }: BankLogoProps) {
   if (hasError) {
     return (
       <div
-        style={{ width: size, height: size }}
-        className={`rounded-xl bg-white border border-border shadow-2xs flex items-center justify-center font-bold text-xs text-primary shrink-0 select-none ${className}`}
+        style={{ width: actualWidth, height: actualHeight }}
+        className={`rounded-lg bg-white border border-border shadow-xs flex items-center justify-center font-bold text-xs text-primary shrink-0 select-none ${className}`}
       >
         {initials}
       </div>
@@ -45,15 +51,15 @@ export function BankLogo({ bank, size = 40, className = "" }: BankLogoProps) {
 
   return (
     <div
-      style={{ width: size, height: size }}
-      className={`rounded-xl bg-white border border-border/80 p-1 shadow-2xs flex items-center justify-center shrink-0 overflow-hidden ${className}`}
+      style={{ width: actualWidth, height: actualHeight }}
+      className={`rounded-lg bg-white border border-border/80 px-1.5 py-0.5 shadow-xs flex items-center justify-center shrink-0 overflow-hidden ${className}`}
     >
       <Image
         src={logoSrc}
         alt={`Logo ${bank.short_name || bank.name || "Ngân hàng"}`}
-        width={size * 2}
-        height={size * 2}
-        className="max-h-full max-w-full object-contain"
+        width={actualWidth * 2}
+        height={actualHeight * 2}
+        className="w-full h-full object-contain"
         onError={() => setHasError(true)}
       />
     </div>
