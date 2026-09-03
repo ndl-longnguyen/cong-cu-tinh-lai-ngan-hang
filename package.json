@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "test": "vitest run",
-    "sync:test": "tsx scripts/test-sync.ts"
+    "sync:test": "tsx scripts/test-sync.ts",
+    "db:migrate": "tsx scripts/migrate-direct.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.114.0",
