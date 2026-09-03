@@ -6,6 +6,7 @@ import { getRatesByBank } from "@/lib/data-access/rates";
 import { dinhDangPhanTram } from "@/lib/dinh-dang";
 import { Globe, Calendar, Info, ArrowRight, ShieldCheck, ExternalLink } from "lucide-react";
 import Link from "next/link";
+import { BankLogo } from "@/components/chung/BankLogo";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -57,9 +58,7 @@ export default async function Page({ params }: Props) {
       {/* Hero Section */}
       <div className="bg-card border border-border rounded-3xl p-6 sm:p-8 mb-8 shadow-sm">
         <div className="flex flex-col md:flex-row gap-6 items-start">
-          <div className="h-20 w-20 rounded-2xl bg-muted flex items-center justify-center text-xl font-bold text-primary shrink-0 border border-border">
-            {nh.code || nh.short_name.substring(0, 3)}
-          </div>
+          <BankLogo bank={nh} size={76} className="rounded-2xl" />
           <div className="flex-1">
             <div className="flex flex-wrap items-center gap-2 mb-2">
               <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200 inline-flex items-center gap-1">

@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import { Calculator, RotateCcw, TrendingUp, Wallet, Landmark, Calendar, ExternalLink, ShieldCheck, CheckCircle2 } from "lucide-react";
+import { BankLogo } from "@/components/chung/BankLogo";
 import { dinhDangTien, dinhDangPhanTram } from "@/lib/dinh-dang";
 import { MASTER_BANKS, BASELINE_RATES } from "@/lib/data-access/seed-data";
 import { calculateFixedTermDeposit, calculateRecurringSavings } from "@/lib/finance/deposit";
@@ -143,17 +144,20 @@ export function TinhLaiTietKiem() {
                 <label className="block text-sm font-medium text-foreground mb-1.5">
                   Chọn ngân hàng
                 </label>
-                <select
-                  value={selectedBankId}
-                  onChange={(e) => setSelectedBankId(e.target.value)}
-                  className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none"
-                >
-                  {MASTER_BANKS.map((b) => (
-                    <option key={b.id} value={b.id}>
-                      {b.short_name} - {b.name}
-                    </option>
-                  ))}
-                </select>
+                <div className="flex items-center gap-3">
+                  <BankLogo bank={selectedBank} size={42} />
+                  <select
+                    value={selectedBankId}
+                    onChange={(e) => setSelectedBankId(e.target.value)}
+                    className="flex-1 w-full rounded-lg border border-input bg-background px-4 py-2.5 text-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                  >
+                    {MASTER_BANKS.map((b) => (
+                      <option key={b.id} value={b.id}>
+                        {b.short_name} - {b.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               {/* Hình thức gửi */}

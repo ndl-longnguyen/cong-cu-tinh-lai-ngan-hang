@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import { ArrowDownUp, CheckCircle, ExternalLink, ShieldCheck, Sparkles, TrendingUp } from "lucide-react";
+import { BankLogo } from "@/components/chung/BankLogo";
 import { dinhDangPhanTram, dinhDangTien } from "@/lib/dinh-dang";
 import { MASTER_BANKS, BASELINE_RATES } from "@/lib/data-access/seed-data";
 import { calculateDepositInterestActualDays } from "@/lib/finance/deposit";
@@ -158,8 +159,13 @@ export function SoSanhLaiSuatTietKiem() {
                   )}
                 </td>
                 <td className="px-4 py-3">
-                  <div className="font-semibold text-foreground">{item.bank?.short_name}</div>
-                  <div className="text-xs text-muted-foreground">{item.bank?.name}</div>
+                  <div className="flex items-center gap-3">
+                    <BankLogo bank={item.bank} size={36} />
+                    <div>
+                      <div className="font-semibold text-foreground">{item.bank?.short_name}</div>
+                      <div className="text-xs text-muted-foreground">{item.bank?.name}</div>
+                    </div>
+                  </div>
                 </td>
                 <td className="px-4 py-3 text-center">
                   <span className="font-bold text-secondary text-sm">

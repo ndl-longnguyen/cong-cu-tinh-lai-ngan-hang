@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { Search, ArrowUpDown, ExternalLink, TrendingUp, ShieldCheck, Clock } from "lucide-react";
+import { BankLogo } from "@/components/chung/BankLogo";
 import { dinhDangPhanTram } from "@/lib/dinh-dang";
 import { MASTER_BANKS, BASELINE_RATES } from "@/lib/data-access/seed-data";
 
@@ -112,9 +113,7 @@ export function BangLaiSuat() {
                 <tr key={item.id} className="hover:bg-muted/20 transition-colors group">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center font-bold text-xs text-primary group-hover:bg-primary/10 transition-colors border border-border">
-                        {item.bank?.code || item.bank?.short_name.substring(0, 3)}
-                      </div>
+                      <BankLogo bank={item.bank} size={42} />
                       <div>
                         <div className="font-semibold text-foreground flex items-center gap-1.5">
                           <span>{item.bank?.short_name}</span>
