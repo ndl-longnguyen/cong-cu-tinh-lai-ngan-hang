@@ -18,13 +18,15 @@ export interface FullSyncResult {
 
 /**
  * ĐIỀU PHỐI TIẾN TRÌNH BATCH SYNC:
- * Gom 30 ngân hàng thành các batch 8 - 10 ngân hàng/lần gọi.
- * Toàn bộ 30 ngân hàng chỉ tốn đúng 3 - 4 requests/ngày -> An toàn tuyệt đối cho Free Tier!
+ * Gom 5 ngân hàng/lần gọi (Batch Size = 5) để tránh lỗi 503 high demand và token truncation.
+ * Toàn bộ 30 ngân hàng chỉ tốn đúng 6 requests/ngày -> Hoàn toàn nằm trong Free Tier (limit 20 req/ngày).
  */
-export async function syncAllBanks(batchSize: number = 10): Promise<FullSyncResult> {
+export async function syncAllBanks(batchSizeOverride?: number): Promise<FullSyncResult> {
   const supabase = getSupabaseAdminClient();
   const allBanks = await getBanks();
   let runId = `local-${Date.now()}`;
+
+  const batchSize = batchSizeOverride || parseInt(process.env.BATCH_SIZE || "5", 10);
 
   // 1. Kiểm tra Concurrency: Chống 2 task sync chạy đồng thời
   if (supabase) {
@@ -74,13 +76,13 @@ export async function syncAllBanks(batchSize: number = 10): Promise<FullSyncResu
   let needsReviewCount = 0;
   let isQuotaHalted = false;
 
-  // 2. Chia 30 ngân hàng thành các batch nhỏ 8 - 10 ngân hàng
+  // 2. Chia 30 ngân hàng thành các batch nhỏ 5 ngân hàng
   const chunks: (typeof allBanks)[] = [];
   for (let i = 0; i < allBanks.length; i += batchSize) {
     chunks.push(allBanks.slice(i, i + batchSize));
   }
 
-  console.log(`[Batch Sync] Bắt đầu đồng bộ ${allBanks.length} ngân hàng qua ${chunks.length} batch requests...`);
+  console.log(`[Batch Sync] Bắt đầu đồng bộ ${allBanks.length} ngân hàng qua ${chunks.length} batch requests (mỗi batch ${batchSize} ngân hàng)...`);
 
   for (let cIdx = 0; cIdx < chunks.length; cIdx++) {
     const batchBanks = chunks[cIdx];
@@ -88,7 +90,7 @@ export async function syncAllBanks(batchSize: number = 10): Promise<FullSyncResu
 
     let batchResultMap = new Map<string, any>();
     try {
-      // GỌI DUY NHẤT 1 REQUEST CHO CẢ NHÓM 10 NGÂN HÀNG!
+      // GỌI DUY NHẤT 1 REQUEST CHO CẢ NHÓM 5 NGÂN HÀNG!
       batchResultMap = await queryGeminiBatchRates(batchBanks);
     } catch (batchErr: any) {
       if (batchErr?.name === "GeminiQuotaExceededError") {
@@ -136,9 +138,9 @@ export async function syncAllBanks(batchSize: number = 10): Promise<FullSyncResu
       }
     }
 
-    // Nghỉ 2000ms giữa các batch
+    // Nghỉ 3000ms giữa các batch để tránh dồn dập và làm mát API Search Grounding
     if (cIdx < chunks.length - 1) {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 3000));
     }
   }
 

@@ -89,7 +89,10 @@ export async function queryGeminiRatesForBank(
           ],
           generationConfig: {
             temperature: 0.1,
-            maxOutputTokens: 2048,
+            maxOutputTokens: 8192,
+            thinkingConfig: {
+              thinkingBudget: 0,
+            },
           },
         }),
       });
@@ -100,6 +103,11 @@ export async function queryGeminiRatesForBank(
           throw new GeminiQuotaExceededError(
             `Gemini Free-Tier quota exceeded (limit 20 requests/day). Vui lòng đợi reset hoặc áp dụng batch sync.`
           );
+        }
+        if (response.status === 503 && attempt <= retryCount) {
+          console.warn(`[Gemini 503] Model high demand for ${bank.code}. Retrying in 2s...`);
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+          continue;
         }
         throw new Error(`Gemini API returned status ${response.status}: ${errorText}`);
       }
@@ -162,7 +170,7 @@ export async function queryGeminiRatesForBank(
           rates: [],
         };
       }
-      await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
+      await new Promise((resolve) => setTimeout(resolve, 1500 * attempt));
     }
   }
 
@@ -175,8 +183,8 @@ export async function queryGeminiRatesForBank(
 }
 
 /**
- * CÁCH 1: BATCH QUERY - Tra cứu đồng loạt 8 - 10 ngân hàng trong 1 request duy nhất!
- * Giảm 90% số lượng request, toàn bộ 30 ngân hàng chỉ tốn 3 - 4 requests/ngày.
+ * CÁCH 1: BATCH QUERY - Tra cứu đồng loạt 5 ngân hàng/lần với thinkingBudget: 0 và maxOutputTokens: 8192!
+ * Khắc phục hoàn toàn lỗi MAX_TOKENS và lỗi 503 high demand.
  */
 export async function queryGeminiBatchRates(
   banks: MasterBank[]
@@ -202,97 +210,117 @@ export async function queryGeminiBatchRates(
 
   const prompt = buildBatchRateSearchPrompt(banks);
 
-  try {
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+  // Thử tối đa 2 lần nếu gặp lỗi tạm thời 503 (High Demand)
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              {
-                text: prompt,
-              },
-            ],
-          },
-        ],
-        tools: [
-          {
-            googleSearch: {},
-          },
-        ],
-        generationConfig: {
-          temperature: 0.1,
-          maxOutputTokens: 4096,
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      }),
-    });
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  text: prompt,
+                },
+              ],
+            },
+          ],
+          tools: [
+            {
+              googleSearch: {},
+            },
+          ],
+          generationConfig: {
+            temperature: 0.1,
+            maxOutputTokens: 8192,
+            thinkingConfig: {
+              thinkingBudget: 0, // Vô hiệu hóa CoT reasoning để không chiếm hết token quota
+            },
+          },
+        }),
+      });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      if (response.status === 429) {
-        throw new GeminiQuotaExceededError(
-          `Gemini Free-Tier quota reached. Tự động chuyển sang biểu lãi suất chuẩn hóa an toàn.`
+      if (!response.ok) {
+        const errorText = await response.text();
+        if (response.status === 429) {
+          throw new GeminiQuotaExceededError(
+            `Gemini Free-Tier quota reached. Tự động chuyển sang biểu lãi suất chuẩn hóa an toàn.`
+          );
+        }
+
+        // Nếu gặp 503 (model quá tải tức thời), đợi 3 giây rồi thử lại lần 2
+        if (response.status === 503 && attempt === 1) {
+          console.warn("[Batch Gemini] Model 503 High Demand. Tự động nghỉ 3s và thử lại...");
+          await new Promise((r) => setTimeout(r, 3000));
+          continue;
+        }
+
+        throw new Error(`Gemini Batch API status ${response.status}: ${errorText}`);
+      }
+
+      const resultData = await response.json();
+      const parts = resultData?.candidates?.[0]?.content?.parts || [];
+      const rawText = parts
+        .map((p: any) => (typeof p.text === "string" ? p.text : ""))
+        .filter(Boolean)
+        .join("\n")
+        .trim();
+
+      if (!rawText) {
+        console.warn("[Batch Gemini] Empty response text.");
+        return resultMap;
+      }
+
+      const cleanedJson = extractJsonBlock(rawText);
+      if (!cleanedJson) {
+        console.warn("[Batch Gemini] Could not extract JSON block from text response.");
+        return resultMap;
+      }
+
+      const parsedArray = JSON.parse(cleanedJson);
+      const items = Array.isArray(parsedArray) ? parsedArray : [parsedArray];
+
+      for (const item of items) {
+        if (!item || !item.bankCode) continue;
+
+        const matchedBank = banks.find(
+          (b) =>
+            b.code.toUpperCase() === String(item.bankCode).toUpperCase() ||
+            b.short_name.toLowerCase() === String(item.bankCode).toLowerCase()
         );
+
+        if (!matchedBank) continue;
+
+        const fallbackUrl = BANK_VERIFIED_DEPOSIT_URLS[matchedBank.id] || matchedBank.official_website;
+        if (item.source && (!item.source.url || item.source.url.includes("..."))) {
+          item.source.url = fallbackUrl;
+        }
+
+        const validated = GeminiBankRateResultSchema.safeParse(item);
+        if (validated.success) {
+          resultMap.set(matchedBank.id, validated.data);
+        }
       }
-      throw new Error(`Gemini Batch API status ${response.status}: ${errorText}`);
-    }
 
-    const resultData = await response.json();
-    const parts = resultData?.candidates?.[0]?.content?.parts || [];
-    const rawText = parts
-      .map((p: any) => (typeof p.text === "string" ? p.text : ""))
-      .filter(Boolean)
-      .join("\n")
-      .trim();
-
-    if (!rawText) {
-      console.warn("[Batch Gemini] Empty response text.");
+      return resultMap;
+    } catch (err: any) {
+      if (err instanceof GeminiQuotaExceededError) {
+        throw err;
+      }
+      if (attempt === 1) {
+        console.warn(`[Batch Gemini Attempt 1 Failed]: ${err.message}. Đang thử lại lần 2...`);
+        await new Promise((r) => setTimeout(r, 2000));
+        continue;
+      }
+      console.error("[Batch Gemini Error]:", err.message || err);
       return resultMap;
     }
-
-    const cleanedJson = extractJsonBlock(rawText);
-    if (!cleanedJson) {
-      console.warn("[Batch Gemini] Could not extract JSON block.");
-      return resultMap;
-    }
-
-    const parsedArray = JSON.parse(cleanedJson);
-    const items = Array.isArray(parsedArray) ? parsedArray : [parsedArray];
-
-    for (const item of items) {
-      if (!item || !item.bankCode) continue;
-
-      // Tìm ngân hàng tương ứng theo mã code hoặc short_name
-      const matchedBank = banks.find(
-        (b) =>
-          b.code.toUpperCase() === String(item.bankCode).toUpperCase() ||
-          b.short_name.toLowerCase() === String(item.bankCode).toLowerCase()
-      );
-
-      if (!matchedBank) continue;
-
-      const fallbackUrl = BANK_VERIFIED_DEPOSIT_URLS[matchedBank.id] || matchedBank.official_website;
-      if (item.source && (!item.source.url || item.source.url.includes("..."))) {
-        item.source.url = fallbackUrl;
-      }
-
-      const validated = GeminiBankRateResultSchema.safeParse(item);
-      if (validated.success) {
-        resultMap.set(matchedBank.id, validated.data);
-      }
-    }
-
-    return resultMap;
-  } catch (err: any) {
-    if (err instanceof GeminiQuotaExceededError) {
-      throw err;
-    }
-    console.error("[Batch Gemini Error]:", err.message || err);
-    return resultMap;
   }
+
+  return resultMap;
 }
