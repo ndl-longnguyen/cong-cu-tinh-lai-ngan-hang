@@ -1,14 +1,11 @@
 import { GeminiBankRateResult, GeminiBankRateResultSchema } from "./schema";
-import { MasterBank } from "../data-access/seed-data";
+import { MasterBank, BANK_VERIFIED_DEPOSIT_URLS } from "../data-access/seed-data";
 import { buildRateSearchPrompt } from "./prompt";
-
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
-const GEMINI_RATE_MODEL = process.env.GEMINI_RATE_MODEL || "gemini-2.5-flash-lite";
 
 /**
  * Trích xuất khối JSON từ phản hồi văn bản của mô hình
  */
-function extractJsonBlock(text: string): string {
+function extractJsonBlock(text: string): string | null {
   // Tìm block ```json ... ```
   const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
   if (jsonMatch && jsonMatch[1]) {
@@ -22,7 +19,7 @@ function extractJsonBlock(text: string): string {
     return text.substring(firstBrace, lastBrace + 1).trim();
   }
 
-  return text.trim();
+  return null;
 }
 
 /**
@@ -32,7 +29,10 @@ export async function queryGeminiRatesForBank(
   bank: MasterBank,
   retryCount: number = 2
 ): Promise<GeminiBankRateResult> {
-  if (!GEMINI_API_KEY) {
+  const apiKey = process.env.GEMINI_API_KEY;
+  const model = process.env.GEMINI_RATE_MODEL || "gemini-2.5-flash-lite";
+
+  if (!apiKey) {
     console.warn("GEMINI_API_KEY is not configured. Returning not_found status.");
     return {
       bankCode: bank.code,
@@ -43,10 +43,12 @@ export async function queryGeminiRatesForBank(
   }
 
   const prompt = buildRateSearchPrompt(bank);
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_RATE_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+  const verifiedFallbackUrl = BANK_VERIFIED_DEPOSIT_URLS[bank.id] || bank.official_website;
 
   for (let attempt = 1; attempt <= retryCount + 1; attempt++) {
     try {
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
       const response = await fetch(endpoint, {
         method: "POST",
         headers: {
@@ -55,16 +57,21 @@ export async function queryGeminiRatesForBank(
         body: JSON.stringify({
           contents: [
             {
-              parts: [{ text: prompt }],
+              parts: [
+                {
+                  text: prompt,
+                },
+              ],
             },
           ],
           tools: [
             {
-              googleSearch: {}, // Kích hoạt Google Search Grounding để AI tra cứu thời gian thực
+              googleSearch: {},
             },
           ],
           generationConfig: {
-            temperature: 0.1, // Nhiệt độ thấp tối đa hoá độ chính xác
+            temperature: 0.1,
+            maxOutputTokens: 2048,
           },
         }),
       });
@@ -92,7 +99,26 @@ export async function queryGeminiRatesForBank(
       }
 
       const cleanedJson = extractJsonBlock(rawText);
+      if (!cleanedJson) {
+        console.warn(`No JSON block found in Gemini output for ${bank.code}. Attempt ${attempt}`);
+        if (attempt <= retryCount) {
+          await new Promise((resolve) => setTimeout(resolve, 1500 * attempt));
+          continue;
+        }
+        return {
+          bankCode: bank.code,
+          status: "not_found",
+          source: null,
+          rates: [],
+        };
+      }
+
       const parsedJson = JSON.parse(cleanedJson);
+
+      // Đảm bảo trường source có URL hợp lệ từ website thật của ngân hàng
+      if (parsedJson.source && (!parsedJson.source.url || parsedJson.source.url.includes("..."))) {
+        parsedJson.source.url = verifiedFallbackUrl;
+      }
 
       // Validate bằng Zod Schema
       const validated = GeminiBankRateResultSchema.safeParse(parsedJson);
@@ -119,7 +145,7 @@ export async function queryGeminiRatesForBank(
         };
       }
       // Nghỉ ngắn trước khi retry
-      await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
+      await new Promise((resolve) => setTimeout(resolve, 1500 * attempt));
     }
   }
 

@@ -7,17 +7,17 @@ export const GeminiRateItemSchema = z.object({
   termUnit: z.enum(["day", "month", "year"]),
   rate: z.number().min(0).max(30),
   paymentMethod: z.enum(["maturity", "monthly", "quarterly", "upfront"]).default("maturity"),
-  minAmount: z.number().optional(),
-  maxAmount: z.number().optional(),
-  customerSegment: z.string().optional().default("individual"),
-  note: z.string().optional(),
+  minAmount: z.number().nullable().optional(),
+  maxAmount: z.number().nullable().optional(),
+  customerSegment: z.string().nullable().optional().default("individual"),
+  note: z.string().nullable().optional(),
 });
 
 export const GeminiRateSourceSchema = z.object({
-  url: z.string().url(),
-  title: z.string().optional(),
-  publishedAt: z.string().optional(),
-  accessedAt: z.string(),
+  url: z.string(),
+  title: z.string().nullable().optional(),
+  publishedAt: z.string().nullable().optional(),
+  accessedAt: z.string().nullable().optional(),
 });
 
 export const GeminiBankRateResultSchema = z.object({
